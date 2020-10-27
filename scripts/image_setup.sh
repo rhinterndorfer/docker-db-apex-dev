@@ -22,3 +22,7 @@ fi
 yum clean all
 yum update -y
 yum install -y openssl
+
+#gosu
+cp /files/gosu-amd64 /usr/local/bin/gosu
+

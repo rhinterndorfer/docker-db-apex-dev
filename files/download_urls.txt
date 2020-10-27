@@ -4,15 +4,6 @@ https://www-eu.apache.org/dist/tomcat/tomcat-8/v8.5.59/bin/apache-tomcat-8.5.59.
 # AdoptOpenJDK 11 (Linux x64 tar.gz)
 https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.8%2B10/OpenJDK11U-jdk_x64_linux_hotspot_11.0.8_10.tar.gz
 
-# Oracle Database 12.2.0.1 EE
-https://download.oracle.com/otn/linux/oracle12c/122010/linuxx64_12201_database.zip
-
-# Oracle Database 18.3 EE
-https://download.oracle.com/otn/linux/oracle18c/180000/LINUX.X64_180000_db_home.zip
-
-# Oracle Database 19.3 EE
-https://download.oracle.com/otn/linux/oracle19c/190000/LINUX.X64_193000_db_home.zip
-
 # Oracle APEX
 https://download.oracle.com/otn/java/appexpress/apex_20.2.zip
 

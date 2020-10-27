@@ -1,0 +1,2 @@
+docker build --progress plain -t oracle/database:18.4.0-xe -f ..\docker-images\OracleDatabase\SingleInstance\dockerfiles\18.4.0\Dockerfile.xe ..\docker-images\OracleDatabase\SingleInstance\dockerfiles\18.4.0
+docker build --no-cache --progress plain -t db-apex-dev-image .

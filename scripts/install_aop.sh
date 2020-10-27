@@ -10,7 +10,7 @@ aop_create_user(){
     echo "grant connect, create cluster, create dimension, create indextype, create job, create materialized view, create operator, create procedure, create sequence, create session, create synonym, create table, create trigger, create type, create view to AOP;" >> create_user_custom.sql
     echo "/" >> create_user_custom.sql
 
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA @create_user_custom
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS SYSDBA @create_user_custom
 }
 
 aop_create_workspace(){
@@ -27,15 +27,15 @@ aop_create_workspace(){
     echo "END;" >> create_workspace.sql
     echo "/" >> create_workspace.sql
 
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA @create_workspace
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS SYSDBA @create_workspace
 }
 
 aop_install_db(){
     echo "Installing AOP"
 
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l aop/${PASS} @install
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l aop/${PASS} @aop_db_sample_obj
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l aop/${PASS} @aop_db_sample_pkg
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l aop/${PASS}@127.0.0.1/XEPDB1 @install
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l aop/${PASS}@127.0.0.1/XEPDB1 @aop_db_sample_obj
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l aop/${PASS}@127.0.0.1/XEPDB1 @aop_db_sample_pkg
 }
 
 aop_install_apex(){
@@ -80,7 +80,7 @@ EOF`
         echo "@@apex_version_20.x/aop_sample_apex_app.sql" >> install_aop_app.sql
     fi
 
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l aop/${PASS} @install_aop_app
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l aop/${PASS}@127.0.0.1/XEPDB1 @install_aop_app
 }
 
 
@@ -92,7 +92,7 @@ aop_public_grants(){
     echo "grant execute on aop.aop_plsql20_pkg to PUBLIC;" >> create_aop_public_grants.sql
     echo "grant execute on aop.aop_settings20_pkg to PUBLIC;" >> create_aop_public_grants.sql
 
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l aop/${PASS} @create_aop_public_grants
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l aop/${PASS}@127.0.0.1/XEPDB1 @create_aop_public_grants
 }
 
 aop_public_synonyms(){
@@ -103,13 +103,13 @@ aop_public_synonyms(){
     echo "create or replace public synonym aop_plsql20_pkg for aop.aop_plsql20_pkg;" >> create_aop_public_synonyms.sql
     echo "create or replace public synonym aop_settings20_pkg for aop.aop_settings20_pkg;" >> create_aop_public_synonyms.sql
 
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA @create_aop_public_synonyms
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS SYSDBA @create_aop_public_synonyms
 }
 
 aop_unzip(){
     echo "Extracting AOP"
     mkdir /files/aop
-    unzip /files/aop_cloud_v*.zip -d /files/aop/
+    unzip /files/aop_cloud_v*.zip -d /files/aop/ > /dev/null
 }
 
 echo "Installing AOP into DB: ${ORACLE_SID}"

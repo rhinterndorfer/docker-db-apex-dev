@@ -22,7 +22,7 @@ set_apex_wallet_and_pwd() {
   echo "end;" >>set_apex_wallet.sql
   echo "/" >>set_apex_wallet.sql
 
-  echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA @set_apex_wallet
+  echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS SYSDBA @set_apex_wallet
 }
 
 cd /scripts

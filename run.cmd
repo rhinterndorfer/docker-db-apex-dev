@@ -1,0 +1,1 @@
+docker run -d --name db-apex-dev-container -p 8080:8080 -p 8022:22 -p 8021:1521 -v /opt/oracle/oradata db-apex-dev-image

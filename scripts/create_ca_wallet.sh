@@ -63,11 +63,11 @@ create_oracle_wallet() {
     if type "orapki" >/dev/null; then
         echo ""
         echo "> Creating Wallet with orapki"
-        orapki wallet create -wallet $WALLET_DIR -pwd <(cat $WALLET_DIR/_pwd.txt) -auto_login
+        orapki wallet create -wallet $WALLET_DIR -pwd <(cat $WALLET_DIR/_pwd.txt) -auto_login > /dev/null
         echo ""
         echo "> Add each single CA certificate to Wallet"
         for file in $OUTPUT_TMP_DIR/*.crt; do
-            orapki wallet add -wallet $WALLET_DIR -trusted_cert -cert $file -pwd <(cat $WALLET_DIR/_pwd.txt)
+            orapki wallet add -wallet $WALLET_DIR -trusted_cert -cert $file -pwd <(cat $WALLET_DIR/_pwd.txt) > /dev/null
         done
     else
         echo ""
@@ -77,7 +77,7 @@ create_oracle_wallet() {
         done
         echo ""
         echo "> Creating Wallet with openssl"
-        openssl pkcs12 -export -in $WALLET_DIR/ca-certificates.crt -out $WALLET_DIR/ewallet.p12 -nokeys -passout file:$WALLET_DIR/_pwd.txt
+        openssl pkcs12 -export -in $WALLET_DIR/ca-certificates.crt -out $WALLET_DIR/ewallet.p12 -nokeys -passout file:$WALLET_DIR/_pwd.txt > /dev/null
     fi
 }
 

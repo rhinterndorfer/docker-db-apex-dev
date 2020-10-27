@@ -1,6 +1,6 @@
-FROM oraclelinux:7.9
+FROM oracle/database:18.4.0-xe
 
-MAINTAINER Daniel Hochleitner <dhochleitner@posteo.de>
+MAINTAINER Raphael Hinterndorfer <dev@rammelhof.at>
 
 # environment variables
 ENV INSTALL_APEX=true \
@@ -8,25 +8,22 @@ ENV INSTALL_APEX=true \
     INSTALL_SQLDEVWEB=true \
     INSTALL_LOGGER=true \
     INSTALL_OOSUTILS=true \
-    INSTALL_AOP=true \
-    INSTALL_AME=true \
+    INSTALL_AOP=false \
+    INSTALL_AME=false \
     INSTALL_SWAGGER=true \
     INSTALL_CA_CERTS_WALLET=true \
     DBCA_TOTAL_MEMORY=2048 \
-    ORACLE_SID=orcl \
-    SERVICE_NAME=orcl \
-    DB_INSTALL_VERSION=19 \
-    ORACLE_BASE=/u01/app/oracle \
-    ORACLE_HOME12=/u01/app/oracle/product/12.2.0.1/dbhome \
-    ORACLE_HOME18=/u01/app/oracle/product/18.0.0/dbhome \
-    ORACLE_HOME19=/u01/app/oracle/product/19.0.0/dbhome \
-    ORACLE_INVENTORY=/u01/app/oraInventory \
+    ORACLE_SID=XE \
+    SERVICE_NAME=XE \
+    ORACLE_BASE=/opt/oracle \
+    ORACLE_HOME=/opt/oracle/product/18c/dbhomeXE \
     PASS=oracle \
-    ORDS_HOME=/u01/ords \
+    ORACLE_PWD=oracle \
+    ORDS_HOME=/opt/ords \
     JAVA_HOME=/opt/java \
     TOMCAT_HOME=/opt/tomcat \
     APEX_PASS=OrclAPEX1999! \
-    APEX_ADDITIONAL_LANG= \
+    APEX_ADDITIONAL_LANG=de \
     TIME_ZONE=UTC
 
 # copy all scripts

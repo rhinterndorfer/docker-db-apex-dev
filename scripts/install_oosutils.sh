@@ -10,18 +10,18 @@ oosutils_create_user(){
     echo "grant connect, create table, create procedure, create session to OOSUTILS_USER" >> create_user_custom.sql
     echo "/" >> create_user_custom.sql
 
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA @create_user_custom
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS SYSDBA @create_user_custom
 }
 
 oosutils_install(){
     echo "Installing OOS Utils."
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l oosutils_user/${PASS} @install/oos_utils_install
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l oosutils_user/${PASS}@127.0.0.1/XEPDB1 @install/oos_utils_install
 }
 
 
 oosutils_public_grants(){
     echo "Creating OOS Utils Public Grants."
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l oosutils_user/${PASS} @install/grant_to_oos_utils PUBLIC
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l oosutils_user/${PASS}@127.0.0.1/XEPDB1 @install/grant_to_oos_utils PUBLIC
 }
 
 oosutils_public_synonyms(){
@@ -38,13 +38,13 @@ oosutils_public_synonyms(){
     echo "create or replace public synonym oos_util_validation for oosutils_user.oos_util_validation;" >> create_oosutils_public_synonyms.sql
     echo "create or replace public synonym oos_util_web for oosutils_user.oos_util_web;" >> create_oosutils_public_synonyms.sql
 
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA @create_oosutils_public_synonyms
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS SYSDBA @create_oosutils_public_synonyms
 }
 
 oosutils_unzip(){
     echo "Extracting OOS Utils"
     mkdir /files/oosutils
-    unzip /files/oos-utils*.zip -d /files/oosutils/
+    unzip /files/oos-utils*.zip -d /files/oosutils/ > /dev/null
 }
 
 echo "Installing OOS Utils into DB: ${ORACLE_SID}"

@@ -37,18 +37,6 @@ if [ ! -f /scripts/install_oosutils.sh ]; then
     echo "/scripts/install_oosutils.sh not found!"
     exit 1
 fi
-if [ ! -f /scripts/install_oracle12ee.sh ]; then
-    echo "/scripts/install_oracle12ee.sh not found!"
-    exit 1
-fi
-if [ ! -f /scripts/install_oracle18ee.sh ]; then
-    echo "/scripts/install_oracle18ee.sh not found!"
-    exit 1
-fi
-if [ ! -f /scripts/install_oracle19ee.sh ]; then
-    echo "/scripts/install_oracle19ee.sh not found!"
-    exit 1
-fi
 if [ ! -f /scripts/install_ords.sh ]; then
     echo "/scripts/install_ords.sh not found!"
     exit 1
@@ -75,18 +63,6 @@ if [ ! -f /scripts/setenv.sh ]; then
 fi
 #
 echo "......Checking Files......"
-if [ ! -f /files/db_install_12.rsp ]; then
-    echo "/files/db_install_12.rsp not found!"
-    exit 1
-fi
-if [ ! -f /files/db_install_18.rsp ]; then
-    echo "/files/db_install_18.rsp not found!"
-    exit 1
-fi
-if [ ! -f /files/db_install_19.rsp ]; then
-    echo "/files/db_install_19.rsp not found!"
-    exit 1
-fi
 if [ ! -f /files/ords_params.properties ]; then
     echo "/files/ords_params.properties not found!"
     exit 1
@@ -108,24 +84,6 @@ fi
 if ! ls /files/OpenJDK11U-jdk_*.tar.gz 1> /dev/null 2>&1; then
     echo "Java not found!"
     exit 1
-fi
-if [ ${DB_INSTALL_VERSION} == "12" ]; then
-    if ! ls /files/linuxx64_12201_database.zip 1> /dev/null 2>&1; then
-        echo "Oracle DB 12.2.0.1 not found!"
-        exit 1
-    fi
-fi
-if [ ${DB_INSTALL_VERSION} == "18" ]; then
-    if ! ls /files/LINUX.X64_180000_db_home.zip 1> /dev/null 2>&1; then
-        echo "Oracle DB 18.0.0 not found!"
-        exit 1
-    fi
-fi
-if [ ${DB_INSTALL_VERSION} == "19" ]; then
-    if ! ls /files/LINUX.X64_193000_db_home.zip 1> /dev/null 2>&1; then
-        echo "Oracle DB 19.0.0 not found!"
-        exit 1
-    fi
 fi
 if [ ${INSTALL_SQLCL} == "true" ]; then
     if ! ls /files/sqlcl*.zip 1> /dev/null 2>&1; then

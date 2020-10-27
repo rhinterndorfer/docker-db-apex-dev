@@ -15,16 +15,7 @@ ln -s -f /usr/share/zoneinfo/${TIME_ZONE} /etc/localtime
 # ssh
 /usr/sbin/sshd
 # oracle
-if [ ${DB_INSTALL_VERSION} == "12" ]; then
-    export ORACLE_HOME=${ORACLE_HOME12}
-fi
-if [ ${DB_INSTALL_VERSION} == "18" ]; then
-    export ORACLE_HOME=${ORACLE_HOME18}
-fi
-if [ ${DB_INSTALL_VERSION} == "19" ]; then
-    export ORACLE_HOME=${ORACLE_HOME19}
-fi
-gosu oracle bash -c "${ORACLE_HOME}/bin/lsnrctl start"
+${ORACLE_BASE}/runOracle.sh
 gosu oracle bash -c 'echo startup\; | ${ORACLE_HOME}/bin/sqlplus -s -l / as sysdba'
 # tomcat
 if [ ${INSTALL_APEX} == "true" ]; then

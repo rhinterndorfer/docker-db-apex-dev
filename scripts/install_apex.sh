@@ -2,55 +2,30 @@
 
 disable_http(){
     echo "Turning off DBMS_XDB HTTP port"
-    echo "EXEC DBMS_XDB.SETHTTPPORT(0);" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA
+    echo "EXEC DBMS_XDB.SETHTTPPORT(0);" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS SYSDBA
 }
 
-enable_http(){
-    echo "Turning on DBMS_XDB HTTP port"
-    echo "EXEC DBMS_XDB.SETHTTPPORT(8080);" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA
-}
-
-apex_epg_config(){
-    cd ${ORACLE_HOME}/apex
-    echo "Setting up EPG for APEX by running: @apex_epg_config ${ORACLE_HOME}"
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA @apex_epg_config ${ORACLE_HOME}
-    echo "Unlock anonymous account"
-    echo "ALTER USER ANONYMOUS ACCOUNT UNLOCK;" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA
-    echo "Optimizing EPG performance"
-    echo "ALTER SYSTEM SET SHARED_SERVERS=15 SCOPE=BOTH;" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA
-    echo -e "ALTER SYSTEM SET DISPATCHERS='(PROTOCOL=TCP) (SERVICE=${ORACLE_SID}XDB) (DISPATCHERS=3)' SCOPE=BOTH;" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA
-}
 
 apex_create_tablespace(){
     cd ${ORACLE_HOME}/apex
     echo "Creating APEX tablespace."
 
-    if [ ${DB_INSTALL_VERSION} == "12" ]; then
-        DATAFILE_SID=${ORACLE_SID}
-    fi
-    if [ ${DB_INSTALL_VERSION} == "18" ]; then
-        DATAFILE_SID=${ORACLE_SID^^}
-    fi
-    if [ ${DB_INSTALL_VERSION} == "19" ]; then
-        DATAFILE_SID=${ORACLE_SID^^}
-    fi
-
-    ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA <<EOF
-		CREATE TABLESPACE apex DATAFILE '${ORACLE_BASE}/oradata/${DATAFILE_SID}/apex01.dbf' SIZE 100M AUTOEXTEND ON NEXT 10M;
+    ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS SYSDBA <<EOF
+		CREATE TABLESPACE apex DATAFILE '${ORACLE_BASE}/oradata/XE/apex01.dbf' SIZE 256M AUTOEXTEND ON NEXT 64M;
 EOF
 }
 
 apex_install(){
     cd $ORACLE_HOME/apex
     echo "Installing APEX."
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA @apexins APEX APEX TEMP /i/
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS SYSDBA @apexins APEX APEX TEMP /i/
 }
 
 apex_change_admin_pwd(){
     cd $ORACLE_HOME/apex
     echo "Changing APEX Admin Password"
 
-    APEX_SCHEMA=`sqlplus -s -l sys/${PASS} AS SYSDBA <<EOF
+    APEX_SCHEMA=`sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS SYSDBA <<EOF
 SET PAGESIZE 0 FEEDBACK OFF VERIFY OFF HEADING OFF ECHO OFF
 SELECT ao.owner FROM all_objects ao WHERE ao.object_name = 'WWV_FLOW' AND ao.object_type = 'PACKAGE' AND ao.owner LIKE 'APEX_%';
 EXIT;
@@ -67,7 +42,7 @@ EOF`
     echo "end;" >> apxchpwd_custom.sql
     echo "/" >> apxchpwd_custom.sql
 
-    ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA <<EOF
+    ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS SYSDBA <<EOF
 ALTER SESSION SET CURRENT_SCHEMA=${APEX_SCHEMA};
 @apxchpwd_custom.sql
 EXIT;
@@ -79,13 +54,13 @@ apex_install_lang(){
     echo "Installing APEX Language Pack ${APEX_ADDITIONAL_LANG}"
     export NLS_LANG=AMERICAN_AMERICA.AL32UTF8;
 
-    APEX_SCHEMA=`sqlplus -s -l sys/${PASS} AS SYSDBA <<EOF
+    APEX_SCHEMA=`sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS SYSDBA <<EOF
 SET PAGESIZE 0 FEEDBACK OFF VERIFY OFF HEADING OFF ECHO OFF
 SELECT ao.owner FROM all_objects ao WHERE ao.object_name = 'WWV_FLOW' AND ao.object_type = 'PACKAGE' AND ao.owner LIKE 'APEX_%';
 EXIT;
 EOF`
 
-    ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA <<EOF
+    ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS SYSDBA <<EOF
 ALTER SESSION SET CURRENT_SCHEMA=${APEX_SCHEMA};
 @load_${APEX_ADDITIONAL_LANG}.sql
 EXIT;
@@ -97,14 +72,14 @@ EOF
 apex_load_images() {
     echo "Load APEX images."
     # do not load images from path containing soft links to avoid "ORA-22288: file or LOB operation FILEOPEN failed"
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA @apxldimg.sql `readlink -f ${ORACLE_HOME}`
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS SYSDBA @apxldimg.sql `readlink -f ${ORACLE_HOME}`
 }
 
 apex_rest_config() {
     echo "Getting ready for ORDS. Creating user APEX_LISTENER and APEX_REST_PUBLIC_USER."
-    echo -e "${PASS}\n${PASS}" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS sysdba @apex_rest_config.sql
-    echo "ALTER USER APEX_PUBLIC_USER ACCOUNT UNLOCK;" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA
-    echo "ALTER USER APEX_PUBLIC_USER IDENTIFIED BY ${PASS};" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA
+    echo -e "${PASS}\n${PASS}" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS sysdba @apex_rest_config.sql
+    echo "ALTER USER APEX_PUBLIC_USER ACCOUNT UNLOCK;" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS SYSDBA
+    echo "ALTER USER APEX_PUBLIC_USER IDENTIFIED BY ${PASS};" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS SYSDBA
 }
 
 apex_allow_all_acl() {
@@ -132,13 +107,13 @@ apex_allow_all_acl() {
     echo "COMMIT;" >> create_allow_all_acl.sql
     echo "/" >> create_allow_all_acl.sql
 
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA @create_allow_all_acl.sql
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS SYSDBA @create_allow_all_acl.sql
 }
 
 unzip_apex(){
     echo "Extracting APEX"
     rm -rf ${ORACLE_HOME}/apex
-    unzip /files/apex*.zip -d ${ORACLE_HOME}/
+    unzip /files/apex*.zip -d ${ORACLE_HOME}/ > /dev/null
 }
 
 echo "Installing APEX in DB: ${ORACLE_SID}"

@@ -1,7 +1,8 @@
 #!/bin/bash
 
 unzip_and_move(){
-  unzip -o swagger-ui*.zip
+  unzip -o swagger-ui*.zip > /dev/null
+  mkdir ${TOMCAT_HOME}/webapps/swagger-ui
   mv swagger-ui*/dist ${TOMCAT_HOME}/webapps/swagger-ui
 }
 
@@ -14,7 +15,7 @@ cleanup(){
 insert_apex_platform_pref(){
     . /home/oracle/.bash_profile
 
-    APEX_SCHEMA=`sqlplus -s -l sys/${PASS} AS SYSDBA <<EOF
+    APEX_SCHEMA=`sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS SYSDBA <<EOF
 SET PAGESIZE 0 FEEDBACK OFF VERIFY OFF HEADING OFF ECHO OFF
 SELECT ao.owner FROM all_objects ao WHERE ao.object_name = 'WWV_FLOW' AND ao.object_type = 'PACKAGE' AND ao.owner LIKE 'APEX_%';
 EXIT;
@@ -27,7 +28,7 @@ EOF`
     echo "END;" >> insert_apex_platform_pref.sql
     echo "/" >> insert_apex_platform_pref.sql
 
-    ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA <<EOF
+    ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS SYSDBA <<EOF
 ALTER SESSION SET CURRENT_SCHEMA=${APEX_SCHEMA};
 @insert_apex_platform_pref.sql
 EXIT;

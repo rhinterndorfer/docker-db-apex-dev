@@ -10,7 +10,7 @@ ame_create_user(){
     echo "grant connect, create cluster, create dimension, create indextype, create job, create materialized view, create operator, create procedure, create sequence, create session, create synonym, create table, create trigger, create type, create view to AME;" >> create_user_custom.sql
     echo "/" >> create_user_custom.sql
 
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA @create_user_custom
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS SYSDBA @create_user_custom
 }
 
 ame_create_workspace(){
@@ -27,14 +27,14 @@ ame_create_workspace(){
     echo "END;" >> create_workspace.sql
     echo "/" >> create_workspace.sql
 
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA @create_workspace
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS SYSDBA @create_workspace
 }
 
 ame_install_db(){
     echo "Installing AME"
 
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l ame/${PASS} @install
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l ame/${PASS} @ame_db_sample_obj
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l ame/${PASS}@127.0.0.1/XEPDB1 @install
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l ame/${PASS}@127.0.0.1/XEPDB1 @ame_db_sample_obj
 }
 
 ame_install_apex(){
@@ -73,7 +73,7 @@ EOF`
         echo "@@ame_sample_apex_app.sql" >> install_ame_app.sql
     fi
 
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l ame/${PASS} @install_ame_app
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l ame/${PASS}@127.0.0.1/XEPDB1 @install_ame_app
 }
 
 
@@ -82,7 +82,7 @@ ame_public_grants(){
 
     echo "grant execute on ame.ame_api20_pkg to PUBLIC;" > create_ame_public_grants.sql
 
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l ame/${PASS} @create_ame_public_grants
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l ame/${PASS}@127.0.0.1/XEPDB1 @create_ame_public_grants
 }
 
 ame_public_synonyms(){
@@ -91,13 +91,13 @@ ame_public_synonyms(){
     echo "create or replace public synonym ame_api20_pkg for ame.ame_api20_pkg;" > create_ame_public_synonyms.sql
     echo "create or replace public synonym ame_api_pkg for ame.ame_api20_pkg;" >> create_ame_public_synonyms.sql
 
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA @create_ame_public_synonyms
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS SYSDBA @create_ame_public_synonyms
 }
 
 ame_unzip(){
     echo "Extracting AME"
     mkdir /files/ame
-    unzip /files/ame_cloud_v*.zip -d /files/ame/
+    unzip /files/ame_cloud_v*.zip -d /files/ame/ > /dev/null
 }
 
 echo "Installing AME into DB: ${ORACLE_SID}"

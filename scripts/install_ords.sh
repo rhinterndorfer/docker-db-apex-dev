@@ -11,7 +11,7 @@ create_sdw_admin_user() {
     echo "grant connect, dba, pdb_dba to SDW_ADMIN;" >>create_sdw_admin_user.sql
     echo "/" >>create_sdw_admin_user.sql
 
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS} AS SYSDBA @create_sdw_admin_user
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sys/${PASS}@127.0.0.1/XEPDB1 AS SYSDBA @create_sdw_admin_user
 }
 
 enable_ords_sdw_admin() {
@@ -28,16 +28,17 @@ enable_ords_sdw_admin() {
     echo "  COMMIT;" >>enable_ords_sdw_admin.sql
     echo "END;" >>enable_ords_sdw_admin.sql
     echo "/" >>enable_ords_sdw_admin.sql
+    
 
-    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sdw_admin/${PASS} @enable_ords_sdw_admin
+    echo "EXIT" | ${ORACLE_HOME}/bin/sqlplus -s -l sdw_admin/${PASS}@127.0.0.1/XEPDB1 @enable_ords_sdw_admin
 }
 
 source /etc/profile
-
-unzip -o /files/ords*.zip -d ${ORDS_HOME}
+mkdir ${ORDS_HOME}
+unzip -o /files/ords*.zip -d ${ORDS_HOME} > /dev/null
 
 sed -i -E 's:#PASSWORD#:'${PASS}':g' /files/ords_params.properties
-sed -i -E 's:#ORACLE_SID#:'${ORACLE_SID}':g' /files/ords_params.properties
+sed -i -E 's:#ORACLE_SID#:XEPDB1:g' /files/ords_params.properties
 cp -rf /files/ords_params.properties ${ORDS_HOME}/params
 cd ${ORDS_HOME}
 cd ..
